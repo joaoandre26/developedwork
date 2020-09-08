@@ -1,0 +1,1 @@
+"./main.obj" "./src/float_fft.obj" "./src/spectral_analysisf.obj" "./src/timer0A0.obj" "./src/uart.obj" "../lnk_msp430fr5994.cmd" -llibmpu_init.a -llibmath.a -llibc.a 
