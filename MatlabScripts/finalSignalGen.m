@@ -1,6 +1,6 @@
-% close all 
-% clear all
-% clc
+close all 
+clear all
+clc
 %%
 Fs = 4000;
 ntest = 10;
