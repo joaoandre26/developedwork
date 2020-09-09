@@ -43,9 +43,9 @@ void main(int argc, char *argv[])
     domF = dominantFreq(reData, imData, BUFF_SIZE, SAMP_FREQ, MULT_FACT);
     gettimeofday(&stop, NULL);
     exc = (stop.tv_sec-start.tv_sec) + (stop.tv_usec-start.tv_usec); 
-    writeResults(domF, (uint16_t)exc, resPath);
-    //printf("F: %hu \n", domF);
-    //printf("exc: %li uS\n", exc);
+    //writeResults(domF, (uint16_t)exc, resPath);
+    printf("F: %hu \n", domF);
+    printf("exc: %li uS\n", exc);
 }
 void readData(int16_t *data, int size, const char *path)
 {
