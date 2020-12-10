@@ -15,6 +15,9 @@ uint8_t getUART0Byte(void);
 void sendUART0Byte(uint8_t value);
 uint16_t getUART0Short(void);
 void sendUART0Short(uint16_t value);
+//void sendUART0ShortInt(uint16_t value);
+//void enableInterrupts(void);
+//void disableInterrupts(void);
 
 
 

@@ -15,7 +15,7 @@
 #define BUFF_SIZE 512
 #define LOG_2_BUFF 9
 #define MULT_FACT 10
-#define SAMP_FREQ 4000
+#define SAMP_FREQ 44100
 
 void readData(double *data, int size, const char *path);
 void writeResults(double domF, double excT, const char *path);
@@ -29,12 +29,13 @@ void main(int argc, char *argv[])
     struct timeval start, stop;
     double exc;
     // Path of the file with signal to be read
-    char dataPath[200] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/signalsAndData/Signals/Synthetized/signal";
+    //char dataPath[200] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/signalsAndData/Signals/Synthetized/signal";
+    char dataPath[200] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/MatlabScripts/GlassWaterBottleRealTests/Signals/Converted/signal";
     strcat(dataPath, argv[1]);
     strcat(dataPath, ".txt");
     //Path of the file to save information
-    const char resPath[200] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/signalsAndData/Info/FloatPointImpPCRes.txt";
-    
+    //const char resPath[200] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/signalsAndData/Info/FloatPointImpPCRes.txt";
+    const char resPath[200] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/MatlabScripts/GlassWaterBottleRealTests/Results/PCFLRealResults.txt";
     readData(reData, BUFF_SIZE, dataPath);
     gettimeofday(&start, NULL);
     float_fft(reData,imData,LOG_2_BUFF,BUFF_SIZE);
@@ -44,7 +45,7 @@ void main(int argc, char *argv[])
     exc = (stop.tv_sec-start.tv_sec) + (stop.tv_usec-start.tv_usec); 
     writeResults(domF, exc, resPath);
     //printf("F: %lf \n", domF);
-    //printf("exc: %lf uS\n", exc);
+    //printf("exc: %lf uS\n", id);
 }
 void readData(double *data, int size, const char *path)
 {

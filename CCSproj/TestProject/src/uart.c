@@ -7,6 +7,10 @@
 #include <msp430.h>
 #include <stdint.h>
 #include "uart.h"
+
+uint16_t TXVal = 0;
+uint8_t TXENABLE = 0;
+
 void configUART0(void)
 {
     P1SEL0 |= BIT4 | BIT5;
@@ -63,5 +67,40 @@ void sendUART0Short(uint16_t value)
     sendUART0Byte((uint8_t)value);      //Send the 8 lsb
     //__delay_cycles(100);
 }
-
-
+//
+//void sendUART0ShortInt(uint16_t value)
+//{
+//    TXVal = value;
+//}
+//void enableInterrupts(void)
+//{
+//    UCA0IE |= UCTXIE;
+//}
+//void disableInterrupts(void)
+//{
+//    UCA0IE &= ~UCTXIE;
+//}
+//
+//#pragma vector = USCI_A0_VECTOR
+//__interrupt void ISR_EUSCI_A0(void)
+//{
+//    //Sends first MSB
+//    if(!TXENABLE)
+//    {
+//        UCA0TXBUF = (uint8_t)(TXVal>>8);
+//        UCA0IFG &= ~UCTXCPTIFG;
+//        TXENABLE = !TXENABLE;
+//    }
+//    else
+//    {
+//        UCA0TXBUF = (uint8_t)TXVal;
+//        UCA0IE &= ~UCTXIE;
+//        UCA0IFG &= ~UCTXCPTIFG;
+//        TXENABLE = !TXENABLE;
+//        //disableInterrupts();
+//
+//    }
+//    //UCA0IFG &= ~UCTXCPTIFG;
+//}
+//
+//

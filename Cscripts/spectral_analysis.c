@@ -6,6 +6,7 @@
 #ifndef SPECTRAL_ANALYSIS_C
 #define SPECTRAL_ANALYSIS_C
 #include <stdint.h>
+#include <stdio.h>
 #include "spectral_analysis.h"
 /*
   Computing the square root of an integer or a fixed point integer into a 
@@ -97,5 +98,99 @@ uint16_t dominantFreq(int16_t *re, int16_t *im, int size, int samp, int mult)
     id = getID(re, size/2);
     domF = ((uint16_t)((samp*mult*id)/size))/mult;
     return domF;
+}
+uint16_t maxAmp(int16_t *re, int size)
+{
+    uint16_t id;
+    id = getID(re, size/2);
+    return re[id];
+}
+uint16_t nrPeaksAboveThreshold(int16_t *re, int size, uint16_t thrVal, uint16_t rng)
+{
+    uint16_t i, k, lID;
+    lID = 0;        //Last id with amplitude above the threshold value
+    k = 0;          // number of peaks above the threshold value
+    for(i=1; i<size; i++)
+    {
+        if(re[i]>=thrVal)
+        {
+            if(lID <(i-rng))
+            {
+                k++;
+                lID = i;
+            }
+            else if(re[i]>re[lID])
+            {
+                lID = i;
+            }
+        }
+    }
+    return k;
+}
+void saveIDs(uint16_t *idVector, int16_t *re, int size, uint16_t thrVal, uint16_t rng)
+{
+    uint16_t i, lID, k;
+    lID = 0;        //Last id with amplitude above the threshold value
+    k = 0;
+    for(i=1; i<size; i++)
+    {
+        if(re[i]>=thrVal)
+        {
+            if(lID <(i-rng))
+            {
+                idVector[k]=i;
+                k++;
+                lID = i;
+            }
+            else if(re[i]>re[lID])
+            {
+                idVector[k-1]=i;
+                lID = i;
+            }
+        }
+    }
+}
+uint16_t meanEngPeak(int16_t *re, uint16_t id, uint16_t rng)
+{
+    uint16_t sumVal, i;
+    uint16_t mVal;
+    sumVal = 0;
+    for(i=id-rng; i<=id+rng;i++)
+    {
+        sumVal += re[i];
+    }
+    mVal = ((uint16_t)((sumVal*10)/(2*rng+1)))/10;
+    return mVal;
+}
+uint16_t relDomFreq(uint16_t *IDs, uint16_t nIDs, int16_t *re)
+{
+    uint16_t maxID, Eng, maxEng, i;
+    maxEng = 0;
+    maxID = 0;
+    for(i = 0; i<nIDs; i++)
+    {
+        Eng = meanEngPeak(re, IDs[i], 3); 
+        if(Eng>maxEng)
+        {
+            //printf("Eng: %hu \t MaxEng: %hu \n", Eng, maxEng);
+            maxEng = Eng;
+            maxID = IDs[i];
+        }
+    }
+    return maxID;
+}
+void thresholdValue(int16_t *re, int size, uint16_t thrFactMult,uint16_t thrFactDiv, uint16_t mult)
+{
+    uint16_t maxVal, thrVal, nrPeaks;
+    uint16_t maxID;
+    maxVal = maxAmp(re, size/2);
+    thrVal = ((uint16_t)((maxVal*mult*thrFactMult)/thrFactDiv))/mult;
+    
+    nrPeaks = nrPeaksAboveThreshold(re, size/2, thrVal, 3);     //finds hos many peaks are above thethreshold value
+    uint16_t IDs[nrPeaks];                                      //creates an array to save the ids
+    saveIDs(IDs, re, size/2, thrVal, 3);
+    maxID = relDomFreq(IDs, nrPeaks, re);
+    
+    printf("FirstID: %hu \t MaxID: %hu \n",IDs[0], maxID);
 }
 #endif

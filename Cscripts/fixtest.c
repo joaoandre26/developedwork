@@ -30,11 +30,14 @@ void main(int argc, char *argv[])
     long exc;
     //printf("%s\n",argv[1]);
     // Path of the file with signal to be read
-    char dataPath[200] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/signalsAndData/Signals/Synthetized/signal";
-    strcat(dataPath, argv[1]);
-    strcat(dataPath, ".txt");
+    //char dataPath[200] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/signalsAndData/Signals/Synthetized/signal";
+    // char dataPath[200] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/MatlabScripts/GlassWaterBottleRealTests/Signals/Converted/signal";
+    char dataPath[200] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/MatlabScripts/SteelWaterBottleRealTests/signal.txt";
+    // strcat(dataPath, argv[1]);
+    // strcat(dataPath, ".txt");
     //Path of the file to save information
-    const char resPath[200] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/signalsAndData/Info/FixPointImpPCRes.txt";
+    //const char resPath[200] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/signalsAndData/Info/FixPointImpPCRes.txt";
+    //const char resPath[200] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/MatlabScripts/GlassWaterBottleRealTests/Results/PCFXRealResults.txt";
     
     readData(reData, BUFF_SIZE, dataPath);
     gettimeofday(&start, NULL);
@@ -45,7 +48,9 @@ void main(int argc, char *argv[])
     exc = (stop.tv_sec-start.tv_sec) + (stop.tv_usec-start.tv_usec); 
     //writeResults(domF, (uint16_t)exc, resPath);
     printf("F: %hu \n", domF);
-    printf("exc: %li uS\n", exc);
+    //printf("exc: %li uS\n", exc);
+    thresholdValue(reData, BUFF_SIZE, 2, 5, MULT_FACT);
+    //printDouble(reData, imData, BUFF_SIZE/2);
 }
 void readData(int16_t *data, int size, const char *path)
 {

@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name PS1240P02BT)(type Legacy)(uri C:/Users/JoaoAndre/Downloads/PS1240P02BT.lib)(options "")(descr "")(disabled))
+  (lib (name Amp1-rescue)(type Legacy)(uri ${KIPRJMOD}/Amp1-rescue.lib)(options "")(descr ""))
+)

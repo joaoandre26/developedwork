@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name MCP602-I_P)(type KiCad)(uri C:/Users/JoaoAndre/Downloads/MCP602-I_P)(options "")(descr ""))
+  (lib (name TO92260P520H533-3)(type KiCad)(uri C:/Users/JoaoAndre/Downloads/TO92260P520H533-3)(options "")(descr ""))
+)

@@ -11,6 +11,7 @@ GEN_CMDS__FLAG :=
 
 ORDERED_OBJS += \
 "./main.obj" \
+"./src/timer0A0.obj" \
 "./src/uart.obj" \
 "../lnk_msp430fr2433.cmd" \
 $(GEN_CMDS__FLAG) \
@@ -158,8 +159,8 @@ TestProject.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "src\uart.obj" 
-	-$(RM) "main.d" "src\uart.d" 
+	-$(RM) "main.obj" "src\timer0A0.obj" "src\uart.obj" 
+	-$(RM) "main.d" "src\timer0A0.d" "src\uart.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

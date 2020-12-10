@@ -10,7 +10,7 @@
 
 #define BUFF_SIZE 512
 #define LOG_2_BUFF_SIZE 9
-#define SAMP_FREQ 4000
+#define SAMP_FREQ 44100
 #define MULT_FACT 10
 
 void clearBuffer(int16_t *buff, int size);
@@ -30,7 +30,7 @@ void main(void)
 	PM5CTL0 &= ~LOCKLPM5;
 	__enable_interrupt();
 	n = 0;
-	while(n<10)
+	while(n<18)
 	{
 	    //Reads the data from uart and saves it on the buffer
 	    i=0;

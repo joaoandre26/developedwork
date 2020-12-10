@@ -2,3 +2,5 @@ Release/*
 .xdchelp
 config/*
 .lauches/*
+/Debug/
+/Release/
