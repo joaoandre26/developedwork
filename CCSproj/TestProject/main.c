@@ -1,6 +1,6 @@
 #include <msp430.h> 
 #include <stdint.h>
-//#include "./src/uart.h"
+#include "./src/uart.h"
 #include "./src/timer0A1.h"
 #define BUFF_SIZE 1024
 
@@ -20,41 +20,30 @@ void main(void)
     P1DIR |= (BIT1|BIT0);
     P1OUT &= ~(BIT1|BIT0);
 	WDTCTL = WDTPW | WDTHOLD;	// stop watchdog timer
-	//configUART0M2();
+	configUART0M2();
     PM5CTL0 &= ~LOCKLPM5;
-    //configTimer0A0();
     configSW1();
-    //configADC2();
+    configADC2();
     configTimerA1();
-    //configIO();
 
     __enable_interrupt();
-
-    //sendUART0ShortInt(0x4241);
-    //enableInterrupts();
     while(1)
     {
 
         //disableInterrupts();
-//        if(ENFLAG)
-//        {
-//            count = 0;
-//            while(count<BUFF_SIZE)
-//            {
-//                sendUART0Short(adcData[count]);
-//                count++;
-//                delayMS(10);
-//                P1OUT ^= BIT1;
-//            }
-//            ENFLAG = 0;
-//        }
-        //enTimer0A0();
-        //delayMS(100);
-        //disTimer0A0();
-        //P1OUT ^= BIT0;
-        //sendUART0Short(getCounterValue());
-        //delayMS(100);
-        //clearCounterValue();
+        if(ENFLAG)
+        {
+            count = 0;
+            while(count<BUFF_SIZE)
+            {
+                sendUART0Short(adcData[count]);
+                count++;
+                delayMS(10);
+                P1OUT ^= BIT1;
+            }
+            ENFLAG = 0;
+        }
+
     }
 }
 void configSW1(void)
@@ -105,36 +94,18 @@ void delayMS(uint16_t ms)
 __interrupt void ADC_ISR(void)
 {
     ADCVal = ADCMEM0;       //Reads adc value
-    if(TFLAG==0)
+    if(count<BUFF_SIZE)
     {
-        if(ADCVal > 550)
-        {
-            TFLAG=1;
-//            sendUART0ShortInt(ADCVal);
-//            enableInterrupts();
-            adcData[count] = ADCVal;
-            count++;
-        }
+        adcData[count] = ADCVal;
+        count++;
         ENFLAG = 0;
         ADCCTL0 |= ADCENC | ADCSC;
     }
     else
     {
-        if(count<BUFF_SIZE)
-        {
-//            sendUART0ShortInt(ADCVal);
-//            enableInterrupts();
-            adcData[count] = ADCVal;
-            count++;
-            ENFLAG = 0;
-            ADCCTL0 |= ADCENC | ADCSC;
-        }
-        else
-        {
-            count = 0;
-            ENFLAG = 1;
-            TFLAG=0;
-        }
+        count = 0;
+        ENFLAG = 1;
+        TFLAG=0;
     }
 
     P1OUT ^= BIT0;
@@ -146,6 +117,6 @@ __interrupt void SW1_PORT2_ISR(void)
 {
     enTimer0A1();
     P1OUT ^= BIT1;
-    //ADCCTL0 |= ADCENC | ADCSC;
+    ADCCTL0 |= ADCENC | ADCSC;
     P2IFG &= ~BIT3;         //clears flag
 }

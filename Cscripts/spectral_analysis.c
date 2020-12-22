@@ -90,14 +90,12 @@ uint16_t getID(int16_t *arr, int size)
     }
     return id;
 }
-uint16_t dominantFreq(int16_t *re, int16_t *im, int size, int samp, int mult)
+uint16_t dominantFreq(int16_t *re, int16_t *im, int size)
 {
-    uint16_t id, domF;
-    uint16_t tmp1, tmp2, tmp3;
+    uint16_t id;
     spectrumCalc(re, im, size);
     id = getID(re, size/2);
-    domF = ((uint16_t)((samp*mult*id)/size))/mult;
-    return domF;
+    return id;
 }
 uint16_t maxAmp(int16_t *re, int size)
 {
@@ -162,24 +160,49 @@ uint16_t meanEngPeak(int16_t *re, uint16_t id, uint16_t rng)
     mVal = ((uint16_t)((sumVal*10)/(2*rng+1)))/10;
     return mVal;
 }
-uint16_t relDomFreq(uint16_t *IDs, uint16_t nIDs, int16_t *re)
+uint16_t AvgAmp(uint16_t *re, uint16_t size, uint16_t id, uint16_t thr)
+{
+    uint16_t i, imin, sumVal, avg;
+    i=id;
+    while(re[i]>thr)
+    {
+        i--;
+    }
+    i=i+1;
+    imin=i;
+    while(re[i]>thr)
+    {
+        sumVal += re[i];
+        printf("Avg: %hu\t\n",re[i]);
+        i++;
+    }
+    i=i-1;
+    avg = (uint16_t)(sumVal/(imin-i));
+    printf("Avg: %hu\t\n",avg);
+    return avg; 
+}
+uint16_t relDomFreq(uint16_t *IDs, uint16_t nIDs, int16_t *re, uint16_t size, uint16_t threshold)
 {
     uint16_t maxID, Eng, maxEng, i;
     maxEng = 0;
     maxID = 0;
     for(i = 0; i<nIDs; i++)
     {
-        Eng = meanEngPeak(re, IDs[i], 3); 
+        printf("pass");
+        Eng = AvgAmp(re, size, IDs[i], threshold); 
         if(Eng>maxEng)
         {
-            //printf("Eng: %hu \t MaxEng: %hu \n", Eng, maxEng);
             maxEng = Eng;
             maxID = IDs[i];
         }
     }
     return maxID;
 }
-void thresholdValue(int16_t *re, int size, uint16_t thrFactMult,uint16_t thrFactDiv, uint16_t mult)
+uint16_t returnFreq(uint16_t ID, uint16_t samp, uint16_t size, uint16_t mult)
+{
+    return ((uint16_t)((samp*mult*ID)/size))/mult;    
+}
+uint16_t thresholdValue(int16_t *re, int size, uint16_t thrFactMult,uint16_t thrFactDiv, uint16_t mult)
 {
     uint16_t maxVal, thrVal, nrPeaks;
     uint16_t maxID;
@@ -189,8 +212,39 @@ void thresholdValue(int16_t *re, int size, uint16_t thrFactMult,uint16_t thrFact
     nrPeaks = nrPeaksAboveThreshold(re, size/2, thrVal, 3);     //finds hos many peaks are above thethreshold value
     uint16_t IDs[nrPeaks];                                      //creates an array to save the ids
     saveIDs(IDs, re, size/2, thrVal, 3);
-    maxID = relDomFreq(IDs, nrPeaks, re);
-    
-    printf("FirstID: %hu \t MaxID: %hu \n",IDs[0], maxID);
+    maxID = relDomFreq(IDs, nrPeaks, re, size, thrVal);  
+    return maxID;
+}
+
+/* Steps to find the first peak of all 
+ * 1 - determine the average amplitude of the spectrum to use as reference
+ * 2 - Find the first value above the average and return the ID 
+ */
+
+uint16_t averageAmpSpectrum(uint16_t *re, uint16_t size)
+{
+    uint16_t sum = 0;
+    uint16_t avgVal = 0;
+    uint16_t i;
+    for(i=0;i<size;i++)
+    {
+        sum += re[i];
+    }
+    avgVal = (uint16_t)(sum/size);
+    //printf("Sum: %hu \t Avg: %hu\t\n", sum, avgVal);
+    return avgVal;
+}
+uint16_t firstPeak(uint16_t *re, uint16_t size)
+{
+    uint16_t avgVal, i;
+    avgVal = averageAmpSpectrum(re,size);
+    for(i=1; i<size;i++)
+    {
+        if(re[i]>avgVal)
+        {
+            break;
+        }
+    }
+    return i;
 }
 #endif

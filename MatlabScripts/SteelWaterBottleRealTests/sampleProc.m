@@ -9,7 +9,7 @@ EmptyPath = 'C:\Users\JoaoAndre\Documents\masterthesis\RecordedTests\OneDrive - 
 Fs = 4000;
 
 for i=0:29
-    x = csvread(strcat(FullPath, 'test', num2str(i), '.txt'));
+    x = csvread(strcat(EmptyPath, 'test', num2str(i), '.txt'));
     
     % Convert the signal in the following lines 
     fID = min(find(abs(x(:,1))>0.005));     %finds where the knock starts
