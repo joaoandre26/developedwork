@@ -117,6 +117,7 @@ __interrupt void SW1_PORT2_ISR(void)
 {
     enTimer0A1();
     P1OUT ^= BIT1;
+    //delayMS(50);
     ADCCTL0 |= ADCENC | ADCSC;
     P2IFG &= ~BIT3;         //clears flag
 }

@@ -35,5 +35,5 @@ list = dir(savePath);
 dirL = size(list);
 dirL = dirL - 2;
 
-csvwrite(strcat(savePath,'test', num2str(dirL(1,1)),'.txt'),arr);
+%csvwrite(strcat(savePath,'test', num2str(dirL(1,1)),'.txt'),arr);
 disp([num2str(dirL(1,1)+1) ' Results from path ' circPath(1,:) MeasPath(1,:) bottlePath(1,:)]);
