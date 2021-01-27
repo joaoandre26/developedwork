@@ -8,6 +8,8 @@ void delayMS(uint16_t ms);
 void configSW1(void);
 void configADC2(void);
 void enableADCConv(uint8_t flag);
+void enMeasurment(void);
+void cleanArr(uint16_t *data, uint16_t size);
 
 //uint8_t FLAG = 0;
 uint16_t ADCVal;
@@ -15,6 +17,7 @@ uint8_t TFLAG = 0;
 uint8_t ENFLAG = 0;
 uint16_t adcData[BUFF_SIZE];
 uint16_t count = 0;
+uint16_t testcnt = 0;
 void main(void)
 {
     P1DIR |= (BIT1|BIT0);
@@ -42,6 +45,13 @@ void main(void)
                 P1OUT ^= BIT1;
             }
             ENFLAG = 0;
+            testcnt++;
+            if(testcnt < 10)
+            {
+                count = 0;
+                cleanArr(adcData, BUFF_SIZE);
+                enMeasurment();
+            }
         }
 
     }
@@ -67,7 +77,7 @@ void configADC2(void)
     //SYSCFG2 |= ADCPCTL2;
     //Configuration of the ADC
     ADCCTL0 &= ~(ADCSHT3 | ADCSHT2 | ADCSHT1 | ADCSHT0);
-    ADCCTL0 |= ADCSHT_8;   // Sample-and-Hold at 256 factor CLK/256=3906Hz
+    ADCCTL0 |= ADCSHT_8;   // Sample-and-Hold: If(ADCSHT_8) CLK/256=3906Hz;   ElseIf(ADCSHT_6) CLK/128=7812Hz
     ADCCTL0 |= ADCON;       // Turn ON the ADC
 
     ADCCTL1 |= ADCSSEL_2;   // Selects SMCLK = 1MHz
@@ -80,7 +90,14 @@ void configADC2(void)
     // Sets IRQ
     ADCIE |= ADCIE0;
 }
-
+void enMeasurment(void)
+{
+    enTimer0A1();
+    P1OUT ^= BIT1;
+    //delayMS(50);
+    ADCCTL0 |= ADCENC | ADCSC;
+    P2IFG &= ~BIT3;         //clears flag
+}
 void delayMS(uint16_t ms)
 {
     uint16_t i;
@@ -115,9 +132,19 @@ __interrupt void ADC_ISR(void)
 #pragma vector = PORT2_VECTOR
 __interrupt void SW1_PORT2_ISR(void)
 {
-    enTimer0A1();
-    P1OUT ^= BIT1;
-    //delayMS(50);
-    ADCCTL0 |= ADCENC | ADCSC;
-    P2IFG &= ~BIT3;         //clears flag
+    testcnt = 0;
+    enMeasurment();
+//    enTimer0A1();
+//    P1OUT ^= BIT1;
+//    //delayMS(50);
+//    ADCCTL0 |= ADCENC | ADCSC;
+//    P2IFG &= ~BIT3;         //clears flag
+}
+void cleanArr(uint16_t *data, uint16_t size)
+{
+    uint16_t i;
+    for(i=0; i<size; i++)
+    {
+        data[i] = 0;
+    }
 }

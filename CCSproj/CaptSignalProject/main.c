@@ -8,6 +8,8 @@ void delayMS(uint16_t ms);
 void configSW1(void);
 void configADC2(void);
 void enableADCConv(uint8_t flag);
+void enMeasurment(void);
+void cleanArr(uint16_t *data, uint16_t size);
 
 //uint8_t FLAG = 0;
 uint16_t ADCVal;
@@ -16,6 +18,7 @@ uint8_t ENFLAG = 0;
 uint8_t RFLAG = 0;
 uint16_t adcData[BUFF_SIZE];
 uint16_t count = 0;
+uint16_t testcnt = 0;
 void main(void)
 {
     P1DIR |= (BIT1|BIT0);
@@ -43,6 +46,13 @@ void main(void)
                 P1OUT ^= BIT1;
             }
             ENFLAG = 0;
+            testcnt++;
+            if(testcnt < 10)
+            {
+                count = 0;
+                cleanArr(adcData, BUFF_SIZE);
+                enMeasurment();
+            }
         }
 
     }
@@ -81,7 +91,14 @@ void configADC2(void)
     // Sets IRQ
     ADCIE |= ADCIE0;
 }
-
+void enMeasurment(void)
+{
+//    enTimer0A1();
+    P1OUT ^= BIT1;
+    //delayMS(50);
+    ADCCTL0 |= ADCENC | ADCSC;
+    P2IFG &= ~BIT3;         //clears flag
+}
 void delayMS(uint16_t ms)
 {
     uint16_t i;
@@ -95,16 +112,26 @@ void delayMS(uint16_t ms)
 __interrupt void ADC_ISR(void)
 {
     //Comment the following code if is to perform one at time, with automatic hit
-
     ADCVal = ADCMEM0;       //Reads adc value
-    if(ADCVal <370 || ADCVal > 430)
+    if(TFLAG==0)
     {
-        RFLAG = 1;
+        if(ADCVal > 750)
+        {
+            TFLAG=1;
+//            sendUART0ShortInt(ADCVal);
+//            enableInterrupts();
+            adcData[count] = ADCVal;
+            count++;
+        }
+        ENFLAG = 0;
+        ADCCTL0 |= ADCENC | ADCSC;
     }
-    if(RFLAG)
+    else
     {
         if(count<BUFF_SIZE)
         {
+//            sendUART0ShortInt(ADCVal);
+//            enableInterrupts();
             adcData[count] = ADCVal;
             count++;
             ENFLAG = 0;
@@ -115,14 +142,11 @@ __interrupt void ADC_ISR(void)
             count = 0;
             ENFLAG = 1;
             TFLAG=0;
-            RFLAG = 0;
         }
-        P1OUT ^= BIT0;
     }
-//    ADCCTL0 |= ADCENC | ADCSC;
 // Uncoment the following code to perfor one test at a time
-
-
+//
+//
 //    ADCVal = ADCMEM0;       //Reads adc value
 //    if(count<BUFF_SIZE)
 //    {
@@ -145,11 +169,20 @@ __interrupt void ADC_ISR(void)
 #pragma vector = PORT2_VECTOR
 __interrupt void SW1_PORT2_ISR(void)
 {
+    testcnt = 0;
+    enMeasurment();
     //Uncomment if manual automatic hit
-    //enTimer0A1();
-
-    P1OUT ^= BIT1;
-    //delayMS(50);
-    ADCCTL0 |= ADCENC | ADCSC;
-    P2IFG &= ~BIT3;         //clears flag
+//    enTimer0A1();
+//    P1OUT ^= BIT1;
+//    //delayMS(50);
+//    ADCCTL0 |= ADCENC | ADCSC;
+//    P2IFG &= ~BIT3;         //clears flag
+}
+void cleanArr(uint16_t *data, uint16_t size)
+{
+    uint16_t i;
+    for(i=0; i<size; i++)
+    {
+        data[i] = 0;
+    }
 }
