@@ -4,16 +4,16 @@ clc
 %% 
 % Receiving uC data
 
-path = 'C:\Users\JoaoAndre\Documents\masterthesis\RecordedTests\OneDrive - Universidade de Aveiro\Tests20_01_2021\';
+path = 'C:\Users\JoaoAndre\Documents\masterthesis\RecordedTests\OneDrive - Universidade de Aveiro\Tests12_04_2021\';
 figure(1)
 BUFF_SIZE = 1024;
-s=serialport("COM4", 115200);
+s=serialport("COM9", 115200);
 i=0;
 arr = [];
 rawData = [];
 n=0;
 tstart = tic;
-while(n<10)
+while(n<1)
     tic
     while(i<BUFF_SIZE)
        disp(i);
@@ -30,22 +30,33 @@ while(n<10)
         i=i+1;
     end
     plot(arr);
-    circPath = ['Piezzo\';'PiezC1\';'PiezOp\';'AcC14k\';'AcC24k\';'Accele\'];
-    MeasPath = ['BotMid\';'TopMid\'];
-    bottlePath = ['Full\';'Half\';'Empt\'];
-    folderPath = strcat(circPath(4,:), MeasPath(1,:),bottlePath(1,:));
-    savePath = strcat(path, folderPath);
+    %uncomment to receive data from sensors in the bottles
+%     circPath = ['PieBMa\';'PieBAu\';'PiezMa\';'PiezAu\';'AcImMa\';'AcImAu\';'AcCiMa\';'AcCiAu\';'AcEsMa\';'AcEsAu\'];
+%     circPath = ['AcImMa\';'AcImAu\';'AcCiMa\';'AcCiAu\';'AcEsMa\';'AcEsAu\'];
+%     MeasPath = ['BotMid\';'TopMid\'];
+%     bottlePath = ['Full\';'Half\';'Empt\'];    
+%     folderPath = strcat(circPath(6,:), MeasPath(1,:),bottlePath(3,:));
+%     savePath = strcat(path, folderPath);
+% 
+%     list = dir(savePath);
+%     dirL = size(list);
+%     dirL = dirL - 2;
+%     csvwrite(strcat(savePath,'test', num2str(dirL(1,1)),'.txt'),arr);
+% 
+%     disp([num2str(dirL(1,1)+1) ' Results from path ' folderPath]);
+%     disp(num2str(n));
 
-    list = dir(savePath);
-    dirL = size(list);
-    dirL = dirL - 2;
-    csvwrite(strcat(savePath,'test', num2str(dirL(1,1)),'.txt'),arr);
-    disp([num2str(dirL(1,1)+1) ' Results from path ' folderPath]);
-    disp(num2str(n));
+    % Characterization of the piezo sensor
+    folderPath = 'Characterization\Small\';
+%     folderPath = 'Characterization\Biggg\';
+    savePath = strcat(path, folderPath);
+%     csvwrite(strcat(savePath,'f',num2str((n+1)*100),'hz.txt'),arr);
+    %Common stuff
+%     arr = [];
+    rawData = [];
     n=n+1;
     i=0;
 %     plot(arr);
-    arr = [];
-    rawData = [];
+
 end
 tend = toc(tstart)

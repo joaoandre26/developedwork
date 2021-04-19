@@ -55,6 +55,3 @@ __interrupt void ISR_TIMER1_A0(void)
         disTimer0A1();
     }
 }
-
-
-

@@ -46,7 +46,7 @@ void main(void)
             }
             ENFLAG = 0;
             testcnt++;
-            if(testcnt < 10)
+            if(testcnt < 1)
             {
                 count = 0;
                 cleanArr(adcData, BUFF_SIZE);
@@ -77,7 +77,7 @@ void configADC2(void)
     //SYSCFG2 |= ADCPCTL2;
     //Configuration of the ADC
     ADCCTL0 &= ~(ADCSHT3 | ADCSHT2 | ADCSHT1 | ADCSHT0);
-    ADCCTL0 |= ADCSHT_8;   // Sample-and-Hold: If(ADCSHT_8) CLK/256=3906Hz;   ElseIf(ADCSHT_6) CLK/128=7812Hz
+    ADCCTL0 |= ADCSHT_6;   // Sample-and-Hold: If(ADCSHT_8) CLK/256=3906Hz;   ElseIf(ADCSHT_6) CLK/128=7812Hz
     ADCCTL0 |= ADCON;       // Turn ON the ADC
 
     ADCCTL1 |= ADCSSEL_2;   // Selects SMCLK = 1MHz

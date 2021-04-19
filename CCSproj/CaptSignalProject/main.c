@@ -72,13 +72,14 @@ void configADC2(void)
 {
     //Pins 0 and 1 are used as Leds for debug
     //Set A2 input with analog function
+    // See table 6-17 in msp430fr2433 datasheet for more detailed information
     P1SEL1 |= BIT2;
     P1SEL0 |= BIT2;
 
     //SYSCFG2 |= ADCPCTL2;
     //Configuration of the ADC
     ADCCTL0 &= ~(ADCSHT3 | ADCSHT2 | ADCSHT1 | ADCSHT0);
-    ADCCTL0 |= ADCSHT_8;   // Sample-and-Hold at 256 factor CLK/256=3906Hz
+    ADCCTL0 |= ADCSHT_6;   // Sample-and-Hold at 256 factor CLK/256=3906Hz
     ADCCTL0 |= ADCON;       // Turn ON the ADC
 
     ADCCTL1 |= ADCSSEL_2;   // Selects SMCLK = 1MHz
