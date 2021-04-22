@@ -4,16 +4,16 @@ clc
 %% 
 % Receiving uC data
 
-path = 'C:\Users\JoaoAndre\Documents\masterthesis\RecordedTests\OneDrive - Universidade de Aveiro\Tests12_04_2021\';
+path = 'C:\Users\JoaoAndre\Documents\masterthesis\RecordedTests\OneDrive - Universidade de Aveiro\Tests22_04_2021\';
 figure(1)
 BUFF_SIZE = 1024;
-s=serialport("COM9", 115200);
+s=serialport("COM4", 115200);
 i=0;
 arr = [];
 rawData = [];
 n=0;
 tstart = tic;
-while(n<1)
+while(n<20)
     tic
     while(i<BUFF_SIZE)
        disp(i);
@@ -47,12 +47,12 @@ while(n<1)
 %     disp(num2str(n));
 
     % Characterization of the piezo sensor
-    folderPath = 'Characterization\Small\';
+    folderPath = 'Glue\Characterization4k\Small\';
 %     folderPath = 'Characterization\Biggg\';
     savePath = strcat(path, folderPath);
-%     csvwrite(strcat(savePath,'f',num2str((n+1)*100),'hz.txt'),arr);
+    csvwrite(strcat(savePath,'f',num2str((n+1)*100),'hz.txt'),arr);
     %Common stuff
-%     arr = [];
+    arr = [];
     rawData = [];
     n=n+1;
     i=0;
