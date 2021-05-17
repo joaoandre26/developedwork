@@ -257,5 +257,7 @@ void fix_fft(int16_t fr[], int16_t fi[], uint16_t m)
         --k;  
         l = istep;  
     }  
-}   
+}
+
+
 #endif

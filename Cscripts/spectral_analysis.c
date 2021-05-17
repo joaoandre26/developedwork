@@ -163,22 +163,21 @@ uint16_t meanEngPeak(int16_t *re, uint16_t id, uint16_t rng)
 uint16_t AvgAmp(uint16_t *re, uint16_t size, uint16_t id, uint16_t thr)
 {
     uint16_t i, imin, sumVal, avg;
+    sumVal = 0;
+    avg = 0;
     i=id;
-    while(re[i]>thr)
+    while(re[i]>=thr)
     {
         i--;
     }
     i=i+1;
     imin=i;
-    while(re[i]>thr)
+    while(re[i]>=thr)
     {
         sumVal += re[i];
-        printf("Avg: %hu\t\n",re[i]);
         i++;
     }
-    i=i-1;
-    avg = (uint16_t)(sumVal/(imin-i));
-    printf("Avg: %hu\t\n",avg);
+    avg = (uint16_t)(sumVal/(i-imin));
     return avg; 
 }
 uint16_t relDomFreq(uint16_t *IDs, uint16_t nIDs, int16_t *re, uint16_t size, uint16_t threshold)
@@ -188,7 +187,7 @@ uint16_t relDomFreq(uint16_t *IDs, uint16_t nIDs, int16_t *re, uint16_t size, ui
     maxID = 0;
     for(i = 0; i<nIDs; i++)
     {
-        printf("pass");
+        //printf("pass");
         Eng = AvgAmp(re, size, IDs[i], threshold); 
         if(Eng>maxEng)
         {
@@ -208,11 +207,11 @@ uint16_t thresholdValue(int16_t *re, int size, uint16_t thrFactMult,uint16_t thr
     uint16_t maxID;
     maxVal = maxAmp(re, size/2);
     thrVal = ((uint16_t)((maxVal*mult*thrFactMult)/thrFactDiv))/mult;
-    
-    nrPeaks = nrPeaksAboveThreshold(re, size/2, thrVal, 3);     //finds hos many peaks are above thethreshold value
+    nrPeaks = nrPeaksAboveThreshold(re, size/2, thrVal, 3);     //finds how many peaks are above thethreshold value
     uint16_t IDs[nrPeaks];                                      //creates an array to save the ids
-    saveIDs(IDs, re, size/2, thrVal, 3);
-    maxID = relDomFreq(IDs, nrPeaks, re, size, thrVal);  
+    saveIDs(IDs, re, size/2, thrVal, 3);                        //Save the ids in the vector
+
+    maxID = relDomFreq(IDs, nrPeaks, re, size, thrVal); 
     return maxID;
 }
 
@@ -238,9 +237,10 @@ uint16_t firstPeak(uint16_t *re, uint16_t size)
 {
     uint16_t avgVal, i;
     avgVal = averageAmpSpectrum(re,size);
+    printf("%hu\t\n", (4*avgVal));
     for(i=1; i<size;i++)
     {
-        if(re[i]>avgVal)
+        if(re[i]>(4*avgVal))
         {
             break;
         }
