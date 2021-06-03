@@ -12,7 +12,7 @@
 /*Global Variables*/
 uint16_t count = 0;
 uint16_t testcnt = 0;
-uint16_t adcData[BUFF_SIZE];
+static uint16_t adcData[BUFF_SIZE];
 /*Global Flags*/
 uint8_t reFLAG = 0;
 /*Local Functions*/
@@ -30,7 +30,8 @@ void main(void)
 	configADC();                //Config ADC AN2
 	configSW1(enMeasurment);    //Config SW1 with call back for enable measurment function
 	configTimer0A0(readADC);    //Configure timer with call back function to adc read function
-	//configIOLed();              //Configure LED
+	configTimerA1();
+	configIOLed();              //Configure LED
 	__enable_interrupt();       //Enable interrupts
 	while(1)
 	{
@@ -48,9 +49,10 @@ void main(void)
             }
             reFLAG = 0;
             testcnt++;
-            if(testcnt < 20)
+            if(testcnt < 1)
             {
                 count = 0;
+                //move the line below before the if or add it to the else statement
                 cleanArr(adcData, BUFF_SIZE);
                 //testcnt = 0;
                 enMeasurment();
@@ -83,9 +85,9 @@ void readADC(void)
     {
         reFLAG = 1;
         count = 0;
-        disTimer0A0();
+        //disTimer0A0();
     }
-    //P1OUT ^= BIT0;
+    P1OUT ^= BIT0;
 }
 
 /*Configurations functions*/

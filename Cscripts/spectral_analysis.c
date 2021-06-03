@@ -72,7 +72,7 @@ void spectrumCalc(int16_t *re, int16_t *im, int size)
 {
     uint16_t i;
     for(i=0;i<size;i++)
-    {
+    {   
         re[i] = sqrtI2I(re[i]*re[i] + im[i]*im[i]);
     }
 }
@@ -225,7 +225,7 @@ uint16_t averageAmpSpectrum(uint16_t *re, uint16_t size)
     uint16_t sum = 0;
     uint16_t avgVal = 0;
     uint16_t i;
-    for(i=0;i<size;i++)
+    for(i=1;i<size;i++)
     {
         sum += re[i];
     }
@@ -235,16 +235,18 @@ uint16_t averageAmpSpectrum(uint16_t *re, uint16_t size)
 }
 uint16_t firstPeak(uint16_t *re, uint16_t size)
 {
-    uint16_t avgVal, i;
+    uint16_t avgVal, i, fi;
     avgVal = averageAmpSpectrum(re,size);
     printf("%hu\t\n", (4*avgVal));
     for(i=1; i<size;i++)
     {
         if(re[i]>(4*avgVal))
         {
-            break;
+            fi = i;
+            i = size;
+//            break;
         }
     }
-    return i;
+    return fi;
 }
 #endif

@@ -73,11 +73,11 @@ void spectrumCalc(int16_t *re, int16_t *im, int size)
         re[i] = sqrtI2I(re[i]*re[i] + im[i]*im[i]);
     }
 }
-uint16_t getID(int16_t *arr, int size)
+uint16_t getID(int16_t *arr, uint16_t lID, int size)
 {
     uint16_t id, tmp, i;
     tmp = 0;
-    for(i=1;i<size;i++)
+    for(i=lID;i<size;i++)
     {
         if(arr[i]>tmp)
         {
@@ -87,11 +87,84 @@ uint16_t getID(int16_t *arr, int size)
     }
     return id;
 }
-uint16_t dominantFreq(int16_t *re, int16_t *im, int size, int samp, int mult)
+// Identifying the first ID Functions
+uint16_t firstPeak(int16_t *data, uint16_t avgVal, uint16_t lowID, uint16_t upID)
 {
-    uint16_t id, domF;
-    spectrumCalc(re, im, size);
-    id = getID(re, size/2);
-    domF = ((((uint16_t)(samp*mult))/size)*id)/mult;
-    return domF;
+    uint16_t i, fi;
+    for(i=lowID; i<upID;i++)
+    {
+        if(data[i]>(avgVal))
+        {
+            fi = i;
+            i = upID;
+        }
+    }
+    return fi;
+}
+//Identifying the average highest peak
+uint16_t dominantMeanID(int16_t *data, uint16_t lID, int size, uint16_t thrVal, uint16_t rng)
+{
+    uint16_t i, lsID;
+    uint16_t maxEn, En, thrValH, mID;
+    thrValH = thrVal/2;
+    maxEn = 0;
+    mID = 1;
+    En = 0;
+    lsID = 0;        //Last id with amplitude above the threshold value
+    for(i=lID; i<size/2; i++)
+    {
+        if(data[i]>=thrVal)
+        {
+            if(lsID <(i-rng))
+            {
+                //k++;
+                lsID = i;
+                En = AvgAmp(data, lsID, thrValH);
+                if(En>maxEn)
+                {
+                    maxEn = En;
+                    mID = lsID;
+                }
+            }
+            else if(data[i]>data[lsID])
+            {
+                lsID = i;
+            }
+        }
+    }
+    return mID;
+}
+uint16_t AvgAmp(int16_t *data, uint16_t id, uint16_t thr)
+{
+    uint16_t i, imin, sumVal, avg;
+    sumVal = 0;
+    avg = 0;
+    i=id;
+    while(data[i]>=thr)
+    {
+        i--;
+    }
+    i=i+1;
+    imin=i;
+    while(data[i]>=thr)
+    {
+        sumVal += data[i];
+        i++;
+    }
+    avg = (uint16_t)(sumVal/(i-imin));
+    return avg;
+}
+// defines
+uint16_t averageAmpSpectrum(int16_t *data, uint16_t size)
+{
+    uint16_t sum = 0;
+    uint16_t avgVal = 0;
+    uint16_t i, mult;
+    mult = 10;
+    for(i=0;i<size;i++)
+    {
+        sum += data[i];
+    }
+    avgVal = 4*(((uint16_t)((sum*mult)/size))/mult);
+    return avgVal;
 }

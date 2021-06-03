@@ -26,14 +26,16 @@ void writeFullRes(uint16_t fID, uint16_t domID, uint16_t mID, uint16_t excT, con
 
 void main(int argc, char *argv[])
 {
-    uint16_t domID, fID,mID;
+    uint16_t domID, fID,mID, multFrac;
 
+    multFrac = (uint16_t)((SAMP_FREQ*MULT_FACT)/BUFF_SIZE); // This value is multiplied with the ID to obtain the dominant frequency
+    //printf("%hu\t\n", multFrac);
     int16_t reData[BUFF_SIZE] = {0};
     int16_t imData[BUFF_SIZE] = {0};
     struct timeval start, stop;
     long exc;
     // Path of the file with signal to be read
-    char dataPath[400] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/RecordedTests/OneDrive - Universidade de Aveiro/Tests06_05_2021_1/Ma/TopMid/Empt/test0.txt";
+    char dataPath[400] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/RecordedTests/OneDrive - Universidade de Aveiro/Tests18_05_2021MIC_1/Ma/TopMid/Full/test0.txt";
     //char dataPath[200] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/MatlabScripts/SteelWaterBottleRealTests/signal.txt";
     //char dataPath[200] = "/mnt/c/Users/JoaoAndre/Documents/masterthesis/signalsAndData/Signals/Synthetized/signal";
     // strcat(dataPath, argv[1]);
@@ -45,17 +47,23 @@ void main(int argc, char *argv[])
     gettimeofday(&start, NULL);
     fix_fft(reData,imData,LOG_2_BUFF);
     
+    uint16_t domF, mF, fF;
+
     domID = dominantFreq(reData, imData, BUFF_SIZE);
     fID = firstPeak(reData,BUFF_SIZE);
     mID = thresholdValue(reData, BUFF_SIZE, 2, 5, 10);
-    printRealData(reData, BUFF_SIZE);
+    //printRealData(reData, BUFF_SIZE);
     //printf("Executed all");
+
+    domF = (domID*multFrac)/MULT_FACT;
+    mF = (mID*multFrac)/MULT_FACT;
+    fF = (fID*multFrac)/MULT_FACT;
     
     gettimeofday(&stop, NULL);
     exc = (stop.tv_sec-start.tv_sec) + (stop.tv_usec-start.tv_usec); 
     //writeResults(domF, (uint16_t)exc, resPath);
     //printf("F: %hu \n", domF);
-    printf("domID: %hu \t fID: %hu\t mID: %hu\t\n", domID,fID,mID);
+    printf("domID: %huHz \t fID: %huHz\t mID: %huHz\t\n", domID,fID,mID);
 }
 void readData(int16_t *data, int size, const char *path)
 {

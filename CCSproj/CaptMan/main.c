@@ -32,6 +32,7 @@ void main(void)
     configADC();                //Config ADC AN2
     configSW1(enMeasurment);    //Config SW1 with call back for enable measurment function
     configTimer0A0(readADC);    //Configure timer with call back function to adc read function
+    //configTimerA1();
     //configIOLed();              //Configure LED
     __enable_interrupt();       //Enable interrupts
     while(1)
@@ -49,7 +50,7 @@ void main(void)
             }
             reFLAG = 0;
             testcnt++;
-            if(testcnt < 20)
+            if(testcnt < 10)
             {
                 count = 0;
                 cleanArr(adcData, BUFF_SIZE);
@@ -76,7 +77,7 @@ void readADC(void)
     ADCVal = readAN2();       //Reads adc value
     if(TFLAG==0)
     {
-        if(ADCVal > 750)
+        if(ADCVal > 800)
         {
             TFLAG=1;
             adcData[count] = ADCVal;

@@ -3,7 +3,7 @@ clear all
 clc
 %%
 info = audiodevinfo;%All the input/output devices
-info.input(3);      %Displays the information and the ID of the microphone
+info.input(2);      %Displays the information and the ID of the microphone
 path = 'C:\Users\JoaoAndre\Documents\masterthesis\signalsAndData\Signals\Measured\';
 test = 'test';
 format = '.txt';
@@ -11,8 +11,8 @@ path=strcat(path,test,format);
 fs=4000;
 nBits=16;
 nChannels=1;
-ID=2;
-n=4;
+ID=1;
+n=2;
 
 recObj=audiorecorder(fs,nBits,nChannels,ID);
 disp('Starting...');

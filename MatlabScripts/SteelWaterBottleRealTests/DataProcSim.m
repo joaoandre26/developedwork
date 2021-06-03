@@ -4,21 +4,22 @@ clc
 %% Paths - uncomment to process the data
 %Data recorded on the 21st of December 2020
 
-basePath = 'C:\Users\JoaoAndre\Documents\masterthesis\RecordedTests\OneDrive - Universidade de Aveiro\Tests08_04_2021\';
+basePath = 'C:\Users\JoaoAndre\Documents\masterthesis\RecordedTests\OneDrive - Universidade de Aveiro\Tests18_05_2021\';
 %graphPath = 'C:\Users\JoaoAndre\Documents\masterthesis\RecordedTests\OneDrive - Universidade de Aveiro\Tests21_12_2020\Graphics2\';
-graphPath = 'E:\ResultsThesis\NResults08_04_2021\FreqSim\';
+graphPath = 'E:\ResultsThesis\NResults18_05_2021\FreqSim\';
 
-circPath = ['PieBMa\';'PieBAu\';'PiezAu\'];
+% circPath = ['PieBAu\';'PiezAu\'];
+% circPath = ['AcImMa\';'AcImAu\';'AcCiMa\';'AcCiAu\';'AcEsMa\';'AcEsAu\'];
+circPath = ['AcImMa\';'AcCiMa\'];
 pointPath = ['BotMid\';'TopMid\'];
 bottlePath = ['Empt\';'Half\';'Full\'];
 
 %% Data processing
 CLK = 1000000;
-SampFac = 256;
+SampFac = 250;
 Fs = CLK/SampFac;
 
 for C=1:(length(circPath(:,1)))
-
         for P=1:length(pointPath(:,1))
             for tr=0:9
                 for G=1:length(bottlePath(:,1))
@@ -26,7 +27,7 @@ for C=1:(length(circPath(:,1)))
                     sig = strcat(path,'test', num2str(tr),'.txt');
                     disp(sig)
                     data = csvread(sig);
-                    data = data(128:895);
+%                     data = data(128:895);
                     Y = fft(data);
                     L = length(data);
                     P2 = abs(Y/L);
@@ -35,9 +36,15 @@ for C=1:(length(circPath(:,1)))
                     f = Fs*(0:(L/2))/L;
                     t = (1/Fs)*(0:L-1);
                     gfc = figure(1);
-                    plot(f(2:end),P1);
+                    if G == 1
+                        plot(f(2:end),P1,'b');
+                    elseif G == 2
+                        plot(f(2:end),P1,'k');
+                    else
+                        plot(f(2:end),P1,'r');
+                    end
                     hold on
-                    axis([0 Fs/2 0 100]);
+                    axis([600 1200 0 100]);
                     xlabel('Frequency(Hz)');
                     ylabel('Amplitude');
                     title(['Spectrum of the measurment nº' num2str(tr) ', measured in ' pointPath(P,1:end-4) ' with ' circPath(C,1:end-1)]);
@@ -48,7 +55,6 @@ for C=1:(length(circPath(:,1)))
                     finalPath = strcat(graphPath,circPath(C,1:end-1),pointPath(P,1:end-1),'.pdf');
                     save2pdf(savePath);
                     append_pdfs(finalPath,savePath);
-                
             end 
         end
 end
